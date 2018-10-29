@@ -15,42 +15,59 @@ namespace CommonService
         /// 生成word文档
         /// </summary>
         /// <param name="list">数据库数据表的列表</param>
-        public void CreateToWord(List<string> list,string conStr,string db)
+        public void CreateToWord(List<string> list, string conStr, string db)
         {
             XWPFDocument doc = new XWPFDocument();      //创建新的word文档
 
             XWPFParagraph p1 = doc.CreateParagraph();   //向新文档中添加段落
-         
+
             p1.Alignment = ParagraphAlignment.CENTER;
             XWPFRun r1 = p1.CreateRun();
             r1.FontFamily = "微软雅黑";
             r1.FontSize = 22;
-            r1.IsBold = true;            
+            r1.IsBold = true;
             //向该段落中添加文字
-            r1.SetText(db+"数据库说明文档");
+            r1.SetText(db + "数据库说明文档");
 
             //XWPFParagraph p2 = doc.CreateParagraph();  
             //XWPFRun r2 = p2.CreateRun();
             //r2.SetText("测试段落二");
-            
+
             #region 创建一个表格
             if (list.Count > 0)
             {
-
-
-                
-
-  
                 foreach (var item in list)
                 {
+                    //插入3行空行的换行段落，表与表之间有间隔
+                    var newLine = doc.CreateParagraph();
+                    //doc.CreateParagraph().CreateRun();
+                    //doc.CreateParagraph().CreateRun();
+                    newLine.SpacingLineRule = LineSpacingRule.EXACT;
+                    newLine.SpacingAfterLines = 220;
+                    var text = newLine.CreateRun();
+                    
+                         
+
 
                     XWPFParagraph p3 = doc.CreateParagraph();   //向新文档中添加段落
                     p3.Alignment = ParagraphAlignment.LEFT;
                     XWPFRun r3 = p3.CreateRun();                //向该段落中添加文字
                     r3.FontFamily = "微软雅黑";
-                    r3.FontSize = 18;
+                    r3.FontSize = 16;
                     r3.IsBold = true;
-                    r3.SetText("表名:"+item);
+                    r3.SetText("表名:" + item);
+
+                    var tableDescription = service.GetTableDescription(item, conStr);
+                    if (!string.IsNullOrWhiteSpace(tableDescription))
+                    {
+                        var tbDesc = doc.CreateParagraph();   //向新文档中添加段落
+                        tbDesc.Alignment = ParagraphAlignment.LEFT;
+                        var tbDescRun = tbDesc.CreateRun();                //向该段落中添加文字
+                        tbDescRun.FontFamily = "微软雅黑";
+                        tbDescRun.FontSize = 12;
+                        tbDescRun.SetColor("31849B");
+                        tbDescRun.SetText("说明:" + tableDescription);
+                    }
 
                     //从第二行开始 因为第一行是表头
                     int i = 1;
@@ -68,7 +85,7 @@ namespace CommonService
                     rI.IsBold = true;
                     rI.SetText("序号");
 
-                
+
                     XWPFParagraph pI1 = table.GetRow(0).GetCell(1).AddParagraph();
                     XWPFRun rI1 = pI1.CreateRun();
                     rI1.FontFamily = "微软雅黑";
@@ -128,7 +145,7 @@ namespace CommonService
 
                     #endregion
 
-                    
+
                     if (tabledetaillist != null && tabledetaillist.Count > 0)
                     {
                         foreach (var itm in tabledetaillist)
@@ -138,7 +155,7 @@ namespace CommonService
                             XWPFRun rIO = pIO.CreateRun();
                             //rIO.FontFamily = "微软雅黑";
                             rIO.FontSize = 12;
-                            rIO.IsBold = true;
+                            //rIO.IsBold = true;
                             rIO.SetText(itm.index.ToString());
 
                             //第二列
@@ -146,7 +163,7 @@ namespace CommonService
                             XWPFRun rIO2 = pIO2.CreateRun();
                             //rIO2.FontFamily = "微软雅黑";
                             rIO2.FontSize = 12;
-                            rIO2.IsBold = true;
+                            //rIO2.IsBold = true;
                             rIO2.SetText(itm.Title);
 
 
@@ -154,61 +171,56 @@ namespace CommonService
                             XWPFRun rIO3 = pIO3.CreateRun();
                             //rIO3.FontFamily = "微软雅黑";
                             rIO3.FontSize = 12;
-                            rIO3.IsBold = true;
+                            //rIO3.IsBold = true;
                             rIO3.SetText(itm.isMark.ToString());
 
                             XWPFParagraph pIO4 = table.GetRow(i).GetCell(3).AddParagraph();
                             XWPFRun rIO4 = pIO4.CreateRun();
                             //rIO4.FontFamily = "微软雅黑";
                             rIO4.FontSize = 12;
-                            rIO4.IsBold = true;
+                            //rIO4.IsBold = true;
                             rIO4.SetText(itm.isPK.ToString());
 
                             XWPFParagraph pIO5 = table.GetRow(i).GetCell(4).AddParagraph();
                             XWPFRun rIO5 = pIO5.CreateRun();
                             //rIO5.FontFamily = "微软雅黑";
                             rIO5.FontSize = 12;
-                            rIO5.IsBold = true;
+                            //rIO5.IsBold = true;
                             rIO5.SetText(itm.FieldType);
 
                             XWPFParagraph pIO6 = table.GetRow(i).GetCell(5).AddParagraph();
                             XWPFRun rIO6 = pIO6.CreateRun();
                             //rIO6.FontFamily = "微软雅黑";
                             rIO6.FontSize = 12;
-                            rIO6.IsBold = true;
+                            //rIO6.IsBold = true;
                             rIO6.SetText(itm.fieldLenth.ToString());
 
                             XWPFParagraph pIO7 = table.GetRow(i).GetCell(6).AddParagraph();
                             XWPFRun rIO7 = pIO7.CreateRun();
                             //rIO7.FontFamily = "微软雅黑";
                             rIO7.FontSize = 12;
-                            rIO7.IsBold = true;
+                            //rIO7.IsBold = true;
                             rIO7.SetText(itm.isAllowEmpty.ToString());
 
                             XWPFParagraph pIO8 = table.GetRow(i).GetCell(7).AddParagraph();
                             XWPFRun rIO8 = pIO8.CreateRun();
                             //rIO8.FontFamily = "微软雅黑";
                             rIO8.FontSize = 12;
-                            rIO8.IsBold = true;
+                            //rIO8.IsBold = true;
                             rIO8.SetText(itm.defaultValue.ToString());
 
                             XWPFParagraph pIO9 = table.GetRow(i).GetCell(8).AddParagraph();
                             XWPFRun rIO9 = pIO9.CreateRun();
                             //rIO9.FontFamily = "微软雅黑";
                             rIO9.FontSize = 12;
-                            rIO9.IsBold = true;
+                            //rIO9.IsBold = true;
                             rIO9.SetText(itm.fieldDesc);
 
                             i++;
                         }
                     }
-                    
+
                 }
-           
-
-
-        
-
             }
 
             #endregion
@@ -220,16 +232,16 @@ namespace CommonService
             r2.SetText("存储过程");
             List<ProcModel> proclist = new List<ProcModel>();
             proclist = service.GetProcList(conStr);
-            if(proclist.Count>0)
+            if (proclist.Count > 0)
             {
-                foreach(var item in proclist)
+                foreach (var item in proclist)
                 {
                     //存储过程名称
                     XWPFParagraph pro1 = doc.CreateParagraph();
                     XWPFRun rpro1 = pro1.CreateRun();
                     rpro1.FontSize = 14;
                     rpro1.IsBold = true;
-                    rpro1.SetText("存储过程名称："+item.procName);
+                    rpro1.SetText("存储过程名称：" + item.procName);
                     //存储过程 详情
                     XWPFParagraph pro2 = doc.CreateParagraph();
                     XWPFRun rpro2 = pro2.CreateRun();
@@ -269,8 +281,8 @@ namespace CommonService
             doc.Write(sw);                              //...
             sw.Close();                                 //在服务端生成文件
 
-            FileInfo file = new FileInfo("../../Doc/db.docx");//文件保存路径及名称  
-      
+            //FileInfo file = new FileInfo("../../Doc/db.docx");//文件保存路径及名称  
+
         }
 
         /// <summary>
@@ -308,7 +320,7 @@ namespace CommonService
             /// <summary>
             /// 允许空 0 不， 1 是
             /// </summary>
-            public int isAllowEmpty{ get; set; }
+            public int isAllowEmpty { get; set; }
             /// <summary>
             /// 字段默认值
             /// </summary>

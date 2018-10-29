@@ -85,7 +85,7 @@ namespace CommonService
         public List<string> GetDBNameList(string conStr)
         {
             //List<DBName> list =new List<DBName>();
-            string sql = "select [name] from master.dbo.sysdatabases where DBId>6 Order By [Name] ";
+            string sql = "select [name] from master.dbo.sysdatabases where sid <> 0x01 Order By [Name] ";
             try
             {
                 using (SqlConnection connection = new SqlConnection(conStr))
@@ -123,7 +123,9 @@ namespace CommonService
         public List<string> GetDBTableList(string conStr)
         {
             var list = new List<string>();
-            string sql = "SELECT TABLE_NAME as name FROM INFORMATION_SCHEMA.TABLES";
+            //string sql = "SELECT TABLE_NAME as name FROM INFORMATION_SCHEMA.TABLES";
+            string sql = "SELECT TABLE_NAME AS name  FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA='dbo' ORDER BY TABLE_NAME";
+
             try
             {
                 using (SqlConnection connection = new SqlConnection(conStr))
@@ -186,6 +188,34 @@ namespace CommonService
 
             }
             return list;
+        }
+
+        /// <summary>
+        /// 获取表的描述信息
+        /// </summary>
+        /// <param name="tableName"></param>
+        /// <param name="conStr"></param>
+        /// <returns></returns>
+        public string GetTableDescription(string tableName, string conStr)
+        {
+            var sql = $@"
+                SELECT 
+                    sep.value
+                FROM 
+                    sys.tables t
+                INNER JOIN 
+                    sys.extended_properties sep ON t.object_id = sep.major_id
+                where 
+	                t.name = '{tableName}' and
+                    sep.Name = 'MS_Description'
+                    AND sep.minor_id = 0   
+                ";
+
+            using (SqlConnection connection = new SqlConnection(conStr))
+            {
+                var desc = connection.ExecuteScalar(sql) as string;
+                return desc;
+            }
         }
 
         /// <summary>
