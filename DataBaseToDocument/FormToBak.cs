@@ -27,7 +27,7 @@ namespace DataBaseToDocument
         {
             var list = CheckBox_GetData();
             //string path =@"D:\Bak\";
-            string path= Environment.CurrentDirectory.ToString()+"\\Bak\\";
+            var path= Environment.CurrentDirectory.ToString()+"\\Bak\\";
             if(!Directory.Exists(path))
             {
                 Directory.CreateDirectory(path);//创建新路径
@@ -51,7 +51,7 @@ namespace DataBaseToDocument
         private void FormToBak_Load(object sender, EventArgs e)
         {
            var list = service.GetDBList(constr);
-            DataGridViewCheckBoxColumn newColumn = new DataGridViewCheckBoxColumn();          
+            var newColumn = new DataGridViewCheckBoxColumn();          
             newColumn.HeaderText = "选择";     
             dataGridView1.Columns.Add(newColumn);
             dataGridView1.DataSource = list;
@@ -67,10 +67,10 @@ namespace DataBaseToDocument
             var list = new List<string>();
             if (dataGridView1.Rows.Count > 0)
             {
-                for (int i = 0; i < dataGridView1.Rows.Count; i++)
+                for (var i = 0; i < dataGridView1.Rows.Count; i++)
                 {
-                    DataGridViewCheckBoxCell checkCell = (DataGridViewCheckBoxCell)dataGridView1.Rows[i].Cells[0];
-                    Boolean flag = Convert.ToBoolean(checkCell.Value);
+                    var checkCell = (DataGridViewCheckBoxCell)dataGridView1.Rows[i].Cells[0];
+                    var flag = Convert.ToBoolean(checkCell.Value);
                     if (flag)
                     {
                         list.Add(dataGridView1.Rows[i].Cells[1].Value.ToString());

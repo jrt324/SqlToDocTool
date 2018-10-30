@@ -22,10 +22,10 @@ namespace DataBaseToDocument
 
         private void btnTest_Click(object sender, EventArgs e)
         {
-            string servername = txtServer.Text.Trim();
-            string uid = txtUser.Text.Trim();
-            string pwd = txtPwd.Text.Trim();
-            string constr =service.GetConnectioning(servername,uid,pwd);
+            var servername = txtServer.Text.Trim();
+            var uid = txtUser.Text.Trim();
+            var pwd = txtPwd.Text.Trim();
+            var constr =service.GetConnectioning(servername,uid,pwd);
             if (service.ConnectionTest(constr))
             {
                 MessageBox.Show("连接数据库成功！");
@@ -50,11 +50,11 @@ namespace DataBaseToDocument
             }
             else
             {
-                string db = comboBox1.SelectedValue.ToString();
-                string servername = txtServer.Text.Trim();
-                string uid = txtUser.Text.Trim();
-                string pwd = txtPwd.Text.Trim();
-                string constr = service.GetConnectioning(servername, uid, pwd,db);
+                var db = comboBox1.SelectedValue.ToString();
+                var servername = txtServer.Text.Trim();
+                var uid = txtUser.Text.Trim();
+                var pwd = txtPwd.Text.Trim();
+                var constr = service.GetConnectioning(servername, uid, pwd,db);
                 var listnew = service.GetTableDetail("UserInfo", constr);
                 var list = service.GetDBTableList(constr);
                 
@@ -72,14 +72,14 @@ namespace DataBaseToDocument
             }
             else
             {
-                string db = comboBox1.SelectedValue.ToString();
-                string servername = txtServer.Text.Trim();
-                string uid = txtUser.Text.Trim();
-                string pwd = txtPwd.Text.Trim();
-                string constr = service.GetConnectioning(servername, uid, pwd, db);
+                var db = comboBox1.SelectedValue.ToString();
+                var servername = txtServer.Text.Trim();
+                var uid = txtUser.Text.Trim();
+                var pwd = txtPwd.Text.Trim();
+                var constr = service.GetConnectioning(servername, uid, pwd, db);
                 Form1Value = constr;            
                 //this.Hide();
-                FormToBak fr = new FormToBak();
+                var fr = new FormToBak();
                 fr.ShowDialog();
                 this.Close();
             }

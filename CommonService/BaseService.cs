@@ -85,10 +85,10 @@ namespace CommonService
         public List<string> GetDBNameList(string conStr)
         {
             //List<DBName> list =new List<DBName>();
-            string sql = "select [name] from master.dbo.sysdatabases where sid <> 0x01 Order By [Name] ";
+            var sql = "select [name] from master.dbo.sysdatabases where sid <> 0x01 Order By [Name] ";
             try
             {
-                using (SqlConnection connection = new SqlConnection(conStr))
+                using (var connection = new SqlConnection(conStr))
                 {
                     var list = connection.Query<string>(sql).ToList();
                     return list;
@@ -104,10 +104,10 @@ namespace CommonService
         public List<DBModel> GetDBList(string conStr)
         {
             //List<DBName> list =new List<DBName>();
-            string sql = "select [name] from master.dbo.sysdatabases where DBId>6 Order By [Name] ";
+            var sql = "select [name] from master.dbo.sysdatabases where DBId>6 Order By [Name] ";
             try
             {
-                using (SqlConnection connection = new SqlConnection(conStr))
+                using (var connection = new SqlConnection(conStr))
                 {
                     var list = connection.Query<DBModel>(sql).ToList();
                     return list;
@@ -124,11 +124,11 @@ namespace CommonService
         {
             var list = new List<string>();
             //string sql = "SELECT TABLE_NAME as name FROM INFORMATION_SCHEMA.TABLES";
-            string sql = "SELECT TABLE_NAME AS name  FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA='dbo' ORDER BY TABLE_NAME";
+            var sql = "SELECT TABLE_NAME AS name  FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA='dbo' ORDER BY TABLE_NAME";
 
             try
             {
-                using (SqlConnection connection = new SqlConnection(conStr))
+                using (var connection = new SqlConnection(conStr))
                 {
                      list = connection.Query<string>(sql).ToList();
                 }
@@ -148,12 +148,12 @@ namespace CommonService
         public List<ProcModel> GetProcList(string conStr)
         {
             var list = new List<ProcModel>();
-            string sql = @"  select name as procName, (select text from syscomments where id=OBJECT_ID(name)) as proDerails
+            var sql = @"  select name as procName, (select text from syscomments where id=OBJECT_ID(name)) as proDerails
                          from dbo.sysobjects  o  where OBJECTPROPERTY(id, N'IsProcedure') = 1 order by name  ";
             try
             {
                // http://www.cnblogs.com/minideas/archive/2009/10/29/1591891.html
-                using (SqlConnection connection = new SqlConnection(conStr))
+                using (var connection = new SqlConnection(conStr))
                 {
                     list = connection.Query<ProcModel>(sql).ToList();
                 }
@@ -173,12 +173,12 @@ namespace CommonService
         public List<ViewModel> GetViewList(string conStr)
         {
             var list = new List<ViewModel>();
-            string sql = @"  select name as viewName, (select text from syscomments where id=OBJECT_ID(name)) as viewDerails
+            var sql = @"  select name as viewName, (select text from syscomments where id=OBJECT_ID(name)) as viewDerails
                          from dbo.sysobjects  o  where OBJECTPROPERTY(id, N'IsView') = 1 order by name  ";
             try
             {
                 // http://www.cnblogs.com/minideas/archive/2009/10/29/1591891.html
-                using (SqlConnection connection = new SqlConnection(conStr))
+                using (var connection = new SqlConnection(conStr))
                 {
                     list = connection.Query<ViewModel>(sql).ToList();
                 }
@@ -211,7 +211,7 @@ namespace CommonService
                     AND sep.minor_id = 0   
                 ";
 
-            using (SqlConnection connection = new SqlConnection(conStr))
+            using (var connection = new SqlConnection(conStr))
             {
                 var desc = connection.ExecuteScalar(sql) as string;
                 return desc;
@@ -227,7 +227,7 @@ namespace CommonService
         public List<TableDetail> GetTableDetail(string tableName, string conStr)
         {
             var list = new List<TableDetail>();
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             sb.Append("SELECT [index] = a.colorder,    Title = a.name,    isMark =        CASE    WHEN COLUMNPROPERTY(a.id, a.name, 'IsIdentity') = 1 THEN '1' ELSE '0' END, ");
             sb.Append("isPK =  CASE   WHEN EXISTS(SELECT  1  FROM sysobjects WHERE xtype = 'PK' AND parent_obj = a.id AND name IN(SELECT name  FROM sysindexes WHERE indid IN(SELECT indid  FROM sysindexkeys  WHERE id = a.id AND colid = a.colid)) ) THEN '1' ELSE '0' END, ");
             sb.Append("	FieldType = b.name,fieldLenth = COLUMNPROPERTY(a.id, a.name, 'PRECISION'),isAllowEmpty =  CASE   WHEN a.isnullable = 1 THEN '1' ELSE '0' END, defaultValue = ISNULL(e.text, ''), fieldDesc = ISNULL(g.[value], '') ");
@@ -237,7 +237,7 @@ namespace CommonService
             sb.Append("WHERE d.name = '"+ tableName + "' ORDER BY a.id, a.colorder, d.name");        
             try
             {
-                using (SqlConnection connection = new SqlConnection(conStr))
+                using (var connection = new SqlConnection(conStr))
                 {
                     list = connection.Query<TableDetail>(sb.ToString()).ToList();
                 }
@@ -252,12 +252,12 @@ namespace CommonService
         
             foreach (var item in list)
             {
-                string sql = string.Format("backup database {0} to disk='{1}{0}.bak'  ", item, path);
+                var sql = string.Format("backup database {0} to disk='{1}{0}.bak'  ", item, path);
 
                 // http://www.cnblogs.com/minideas/archive/2009/10/29/1591891.html
-                using (SqlConnection connection = new SqlConnection(conStr))
+                using (var connection = new SqlConnection(conStr))
                 {
-                    int count = connection.Execute(sql);
+                    var count = connection.Execute(sql);
                 }
             }
 
